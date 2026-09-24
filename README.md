@@ -2843,3 +2843,34 @@ prevSwgBias := swgStruct.bias
 // End of indicator — all 13 modules implemented (sections 3–13B + alerts +
 // candle coloring).
 // ============================================================
+
+
+## Entry Confirmation Engine (Indicator-Only, First Pass)
+
+The indicator now includes an optional, deterministic BUY/SELL entry model in `indicator/free/synvoya-confluence.pine` under:
+
+- `═══ Entry Confirmations ═══`
+
+### Default research behavior
+
+- Disabled by default (`Enable Entry Signals = false`) to preserve existing chart behavior.
+- Confirmed bars only (`barstate.isconfirmed` gating in the entry state machine).
+- Direction defaults to both sides.
+- Context defaults to swing-structure bias.
+- POI defaults to `OB or FVG`.
+- Liquidity sweep confirmation defaults to required.
+- Internal BOS/CHoCH confirmation defaults to required.
+- Session filter defaults to London and/or New York.
+- Target defaults to fixed `2.0R`.
+- Stop is anchored beyond the recorded sweep extreme (or POI edge if sweep is disabled), with optional ATR buffer.
+
+### Long/short signal meaning
+
+- **BUY**: bullish context + bullish POI touch + sell-side sweep + bullish internal confirmation + bullish retest close.
+- **SELL**: exact inverse sequence.
+- One setup/trade is managed at a time, with expiry/invalidation rules to prevent stale or duplicate triggers from persisting indefinitely.
+
+### Important limitation
+
+This is an **indicator-only** visual research module (labels/levels/alerts), not the final `strategy()` backtest implementation.  
+It is intended for first-pass chart validation before a separate Strategy Tester script is built.
